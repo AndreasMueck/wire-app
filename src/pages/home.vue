@@ -14,6 +14,7 @@
           v-model:value="breite"
           min="1"
           max="5"
+          step="0.0001"
           info="Wertebereich bis max. 5,00 mm"
           validate
           required
@@ -29,9 +30,10 @@
           min="1"
           max="5"
           info="Wertebereich bis max. 5,00 mm"
+          step="0.0001"
           validate
           required
-          :onValidate="(isValid) => setInputValid(isValid)"
+          :onValidate="(isValid) => checkValue(isValid)"
           clear-button
         >
         </f7-list-input>
@@ -91,7 +93,10 @@ function round(num, decimals) {
   return (Math.round(m) / decimals) * Math.sign(num);
 }
 
-
+function checkValue(isValid) {
+  console.log("function aufgerufen");
+  return true;
+}
 
 const calculateDiameter = () => {
   let valueDicke = dicke.value;

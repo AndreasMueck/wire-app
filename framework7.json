@@ -1,0 +1,43 @@
+{
+  "cwd": "/Users/andreas/www-testing/wire-app",
+  "type": [
+    "web",
+    "pwa",
+    "cordova",
+    "capacitor"
+  ],
+  "name": "wire-app",
+  "pkg": "com.andreasmueck.wireapp",
+  "framework": "vue",
+  "template": "tabs",
+  "cssPreProcessor": "scss",
+  "bundler": "vite",
+  "cordova": {
+    "folder": "cordova",
+    "platforms": [
+      "ios",
+      "android",
+      "electron",
+      "osx"
+    ],
+    "plugins": [
+      "cordova-plugin-statusbar",
+      "cordova-plugin-keyboard",
+      "cordova-plugin-splashscreen"
+    ]
+  },
+  "capacitor": {
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "theming": {
+    "customColor": false,
+    "color": "#007aff",
+    "darkTheme": false,
+    "iconFonts": true,
+    "fillBars": false
+  },
+  "customBuild": false
+}

@@ -1,6 +1,6 @@
 # wire-app
 
-## Framework7 CLI Options
+## In progress
 
 Will be running with Apple iOS and Google Android
 

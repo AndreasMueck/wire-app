@@ -34,8 +34,8 @@
     <f7-block-title>Ergebnis der Berechnung</f7-block-title>
     <f7-block>
       <f7-row>
-        <f7-col width="65">Durchmesser [&#8960;] in mm</f7-col>
-        <f7-col width="35" style="font-weight: bold; color: green">
+        <f7-col width="75">Durchmesser [&#8960;] in mm</f7-col>
+        <f7-col width="25" style="font-weight: bold; color: green">
           {{ result }}
         </f7-col>
       </f7-row>
@@ -65,6 +65,8 @@ import { f7, f7ready } from "framework7-vue";
 import kFactor from "../data/krArray"; // Grosser Array mit Korrekturfaktoren
 
 const pi = Math.PI;
+let d;
+let r;
 
 let breite = ref(null);
 let dicke = ref(null);
@@ -79,25 +81,39 @@ function round(num, decimals) {
 }
 
 const calculateDiameter = () => {
-  
   let valueDicke = dicke.value;
   let valueBreite = breite.value;
 
   // Berechne Seitenverhältnis
-  let calculatedAspectRatio = round(parseFloat(valueBreite) / parseFloat(valueDicke),100);  // auf 2 Stellen nach dem Komma gerundet
-  aspectRatio.value = calculatedAspectRatio;
+  let calculatedAspectRatio = round(parseFloat(valueBreite) / parseFloat(valueDicke),100); // auf 2 Stellen nach dem Komma gerundet
+  let calculatedAspectRatioTrailingZeros = calculatedAspectRatio.toFixed(2);
+  
+  //console.log(typeof calculatedAspectRatioTrailingZeros);
+  aspectRatio.value = calculatedAspectRatioTrailingZeros; // string!
 
   // Berechne Korrekturfaktor
-  if ((calculatedAspectRatio >= 1 ) && (calculatedAspectRatio <= 5 )) {
-    kFactorValue.value = kFactor[calculatedAspectRatio];
+  if (calculatedAspectRatio >= 1 && calculatedAspectRatio <= 5.0) {
+    kFactorValue.value = kFactor[calculatedAspectRatioTrailingZeros];
   }
 
-  let korrekturfaktor = kFactor[calculatedAspectRatio];
-  console.log(korrekturfaktor);
+  // Berechne Korrekturfaktor für grösser 5 und kleiner 17
+  if (calculatedAspectRatio > 5 && calculatedAspectRatio <= 17.0 ) {
+    kFactorValue.value = 0.958;
+  }
+
+  // Korrekturfaktor für die Berechnung
+  let korrekturfaktor = kFactor[calculatedAspectRatioTrailingZeros];
 
   // Berechne Querschnittsfläche
-  let calculatedCrossSectionArea = round(valueDicke * valueBreite * korrekturfaktor,10000);
-  crossSectionArea.value = calculatedCrossSectionArea;
+  let calculatedCrossSectionArea = valueDicke * valueBreite * korrekturfaktor;
+  crossSectionArea.value = calculatedCrossSectionArea.toFixed(4);
+
+  // Berechne Rund-Duchmesser / Endergebnis
+  r=Math.sqrt(calculatedCrossSectionArea/pi);
+  d=r+r;
+  result.value = d.toFixed(4);
+
+
 
 
 

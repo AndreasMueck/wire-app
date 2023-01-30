@@ -5,13 +5,18 @@
     <!-- Input fields -->
     <f7-block-title>Berechnung des Rund-Duchmessers</f7-block-title>
     <f7-block>
-      <f7-list form>
+      <f7-list form id="inputForm">
         <f7-list-input
           label="Flachdraht-Breite"
           type="number"
           placeholder="mm"
           name="breite"
           v-model:value="breite"
+          min="1"
+          max="5"
+          info="Wertebereich bis max. 5,00 mm"
+          validate
+          required
           clear-button
         >
         </f7-list-input>
@@ -21,6 +26,12 @@
           placeholder="mm"
           name="dicke"
           v-model:value="dicke"
+          min="1"
+          max="5"
+          info="Wertebereich bis max. 5,00 mm"
+          validate
+          required
+          :onValidate="(isValid) => setInputValid(isValid)"
           clear-button
         >
         </f7-list-input>
@@ -80,6 +91,8 @@ function round(num, decimals) {
   return (Math.round(m) / decimals) * Math.sign(num);
 }
 
+
+
 const calculateDiameter = () => {
   let valueDicke = dicke.value;
   let valueBreite = breite.value;
@@ -96,7 +109,7 @@ const calculateDiameter = () => {
     kFactorValue.value = kFactor[calculatedAspectRatioTrailingZeros];
   }
 
-  // Berechne Korrekturfaktor für grösser 5 und kleiner 17
+  // Berechne Korrekturfaktor für Seitenverhältnis grösser 5 und kleiner 17
   if (calculatedAspectRatio > 5 && calculatedAspectRatio <= 17.0 ) {
     kFactorValue.value = 0.958;
   }
@@ -113,10 +126,6 @@ const calculateDiameter = () => {
   d=r+r;
   result.value = d.toFixed(4);
 
-
-
-
-
   /* f7.dialog.alert(
         "Dicke: " + state.dicke + "<br>Breite: " + state.breite,
         "Rund-Durchmesser",
@@ -125,4 +134,6 @@ const calculateDiameter = () => {
         }
       ); */
 };
+
+
 </script>

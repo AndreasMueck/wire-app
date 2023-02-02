@@ -1,0 +1,27 @@
+
+
+
+:value="name"
+@input="name = $event.target.value"
+
+
+
+:onValidate="(isValid) => checkValue(isValid)"
+
+
+<f7-button fill large type="submit" @click="calculateDiameter">Berechnen</f7-button>
+
+
+
+ else {
+    const endresult = calculateDiameter();
+  }
+
+
+
+
+
+            @click="calculateDiameter"
+
+
+          :onValidate="(isValid) => checkValue(isValid)"

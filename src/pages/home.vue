@@ -3,9 +3,9 @@
     <!-- Top Navbar -->
     <f7-navbar title="Durchmesser berechnen"></f7-navbar>
     <!-- Input fields -->
-    <f7-block-title>Berechnung des Rund-Duchmessers</f7-block-title>
+    <f7-block-title>Berechnung des Rund-Durchmessers</f7-block-title>
     <f7-block>
-      <f7-list form id="inputForm" @submit="onSubmit">
+      <f7-list form id="inputForm">
         <f7-list-input
           label="Flachdraht-Breite"
           type="number"
@@ -38,8 +38,11 @@
           @input="name = $event.target.value"
         >
         </f7-list-input>
-        <f7-button fill large type="submit">Berechnen</f7-button>
       </f7-list>
+    </f7-block>
+    <!-- Button -->
+    <f7-block>
+      <f7-button fill large @click="calculateDiameter">Berechnen</f7-button>
     </f7-block>
     <!-- Result -->
     <f7-block-title>Ergebnis der Berechnung</f7-block-title>
@@ -86,84 +89,64 @@ let kFactorValue = ref(null);
 let aspectRatio = ref(null);
 let crossSectionArea = ref(null);
 
+/* f7ready((f7) => {
+        f7.dialog.alert('Component mounted');
+}); */
+
 function round(num, decimals) {
   let m = Number((Math.abs(num) * 100).toPrecision(15));
   return (Math.round(m) / decimals) * Math.sign(num);
 }
 
-function checkValue(isValid) {
-  let returnValue = 0;
+function compareValues(valueDicke, valueBreite) {
+  let returnValue;
+  returnValue = valueDicke < valueBreite ? true : false;
+  return returnValue;
+}
 
+const calculateDiameter = () => {
   const valueDicke = parseFloat(dicke.value);
   const valueBreite = parseFloat(breite.value);
 
-  // returnValue = valueDicke < valueBreite ? true : false;
-
-  if (valueDicke < valueBreite) {
-    console.log("TRUE");
-    const disabled = 0;
-    return true;
+  if (!compareValues(valueDicke, valueBreite)) {
+    f7.dialog.alert(
+      "Der Wert DICKE muss kleiner als der Wert BREITE sein.",
+      () => {
+        f7.loginScreen.close();
+      }
+    );
   } else {
-    const disabled = 1;
-    console.log("FALSE");
-    return false;
+    // Berechne Seitenverhältnis
+    let calculatedAspectRatio = round(
+      parseFloat(valueBreite) / parseFloat(valueDicke),
+      100
+    ); // auf 2 Stellen nach dem Komma gerundet
+    let calculatedAspectRatioTrailingZeros = calculatedAspectRatio.toFixed(2);
+
+    //console.log(typeof calculatedAspectRatioTrailingZeros);
+    aspectRatio.value = calculatedAspectRatioTrailingZeros; // string!
+
+    // Berechne Korrekturfaktor
+    if (calculatedAspectRatio >= 1 && calculatedAspectRatio <= 5.0) {
+      kFactorValue.value = kFactor[calculatedAspectRatioTrailingZeros];
+    }
+
+    // Berechne Korrekturfaktor für Seitenverhältnis grösser 5 und kleiner 17
+    if (calculatedAspectRatio > 5 && calculatedAspectRatio <= 17.0) {
+      kFactorValue.value = 0.958;
+    }
+
+    // Korrekturfaktor für die Berechnung
+    let korrekturfaktor = kFactor[calculatedAspectRatioTrailingZeros];
+
+    // Berechne Querschnittsfläche
+    let calculatedCrossSectionArea = valueDicke * valueBreite * korrekturfaktor;
+    crossSectionArea.value = calculatedCrossSectionArea.toFixed(4);
+
+    // Berechne Rund-Duchmesser / Endergebnis
+    r = Math.sqrt(calculatedCrossSectionArea / pi);
+    d = r + r;
+    result.value = d.toFixed(4);
   }
-
-  //console.log("Dicke: " + valueDicke + " RETURN: " + returnValue);
-  //return returnValue;
-}
-
-const onSubmit = (e) => {
-  const isValid = f7.input.validateInputs("#inputForm");
-  if (!isValid) {
-    e.preventDefault();
-    return;
-  }
-}
-
-
-const calculateDiameter = () => {
-  let valueDicke = dicke.value;
-  let valueBreite = breite.value;
-
-  // Berechne Seitenverhältnis
-  let calculatedAspectRatio = round(
-    parseFloat(valueBreite) / parseFloat(valueDicke),
-    100
-  ); // auf 2 Stellen nach dem Komma gerundet
-  let calculatedAspectRatioTrailingZeros = calculatedAspectRatio.toFixed(2);
-
-  //console.log(typeof calculatedAspectRatioTrailingZeros);
-  aspectRatio.value = calculatedAspectRatioTrailingZeros; // string!
-
-  // Berechne Korrekturfaktor
-  if (calculatedAspectRatio >= 1 && calculatedAspectRatio <= 5.0) {
-    kFactorValue.value = kFactor[calculatedAspectRatioTrailingZeros];
-  }
-
-  // Berechne Korrekturfaktor für Seitenverhältnis grösser 5 und kleiner 17
-  if (calculatedAspectRatio > 5 && calculatedAspectRatio <= 17.0) {
-    kFactorValue.value = 0.958;
-  }
-
-  // Korrekturfaktor für die Berechnung
-  let korrekturfaktor = kFactor[calculatedAspectRatioTrailingZeros];
-
-  // Berechne Querschnittsfläche
-  let calculatedCrossSectionArea = valueDicke * valueBreite * korrekturfaktor;
-  crossSectionArea.value = calculatedCrossSectionArea.toFixed(4);
-
-  // Berechne Rund-Duchmesser / Endergebnis
-  r = Math.sqrt(calculatedCrossSectionArea / pi);
-  d = r + r;
-  result.value = d.toFixed(4);
-
-  /* f7.dialog.alert(
-        "Dicke: " + state.dicke + "<br>Breite: " + state.breite,
-        "Rund-Durchmesser",
-        () => {
-          f7.loginScreen.close();
-        }
-      ); */
 };
 </script>

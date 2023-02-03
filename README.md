@@ -4,4 +4,4 @@
 
 Will be running with Apple iOS and Google Android
 
-![alt](ios.png) ![alt](android.png)
+![alt](studio.png) ![alt](ios.png) ![alt](android.png)

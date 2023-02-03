@@ -44,6 +44,7 @@
     "material-icons": "^1.13.1",
     "skeleton-elements": "^4.0.1",
     "swiper": "^8.4.6",
+    "vee-validate": "^4.7.3",
     "vue": "^3.2.45"
   },
   "devDependencies": {

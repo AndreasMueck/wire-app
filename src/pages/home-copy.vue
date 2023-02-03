@@ -5,9 +5,8 @@
     <!-- Input fields -->
     <f7-block-title>Berechnung des Rund-Durchmessers</f7-block-title>
     <f7-block>
-      <f7-list form id="inputForm" @submit="onSubmit">
+      <f7-list form id="inputForm">
         <f7-list-input
-          id="breite"
           label="Flachdraht-Breite"
           type="number"
           placeholder="0,0000"
@@ -19,12 +18,11 @@
           step="0.0001"
           clear-button
           validate
-          @input="name = $event.target.value"
           required
+          @input="name = $event.target.value"
         >
         </f7-list-input>
         <f7-list-input
-          id="dicke"
           label="Flachdraht-Dicke"
           type="number"
           placeholder="0,0000"
@@ -36,14 +34,15 @@
           step="0.0001"
           clear-button
           validate
-          @input="name = $event.target.value"
           required
+          @input="name = $event.target.value"
         >
         </f7-list-input>
-        <f7-button fill large type="submit" :disabled="!noValues"
-          >Berechnen</f7-button
-        >
       </f7-list>
+    </f7-block>
+    <!-- Button -->
+    <f7-block>
+      <f7-button fill large @click="calculateDiameter">Berechnen</f7-button>
     </f7-block>
     <!-- Result -->
     <f7-block-title>Ergebnis der Berechnung</f7-block-title>
@@ -75,28 +74,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { f7, f7ready } from "framework7-vue";
-import { useForm } from "vee-validate";
 import kFactor from "../data/krArray"; // Grosser Array mit Korrekturfaktoren
-
-const { handleSubmit } = useForm();
 
 const pi = Math.PI;
 let d;
 let r;
 
-let breite = ref("");
-let dicke = ref("");
-let result = ref("");
-let kFactorValue = ref("");
-let aspectRatio = ref("");
-let crossSectionArea = ref("");
+let breite = ref(null);
+let dicke = ref(null);
+let result = ref(null);
+let kFactorValue = ref(null);
+let aspectRatio = ref(null);
+let crossSectionArea = ref(null);
 
-const noValues = computed(
-  () => dicke.value.length > 0 && breite.value.length > 0
-);
-//const noValues = true;
+/* f7ready((f7) => {
+        f7.dialog.alert('Component mounted');
+}); */
 
 function round(num, decimals) {
   let m = Number((Math.abs(num) * 100).toPrecision(15));
@@ -109,14 +104,17 @@ function compareValues(valueDicke, valueBreite) {
   return returnValue;
 }
 
-const onSubmit = handleSubmit((values) => {
+const calculateDiameter = () => {
   const valueDicke = parseFloat(dicke.value);
   const valueBreite = parseFloat(breite.value);
 
   if (!compareValues(valueDicke, valueBreite)) {
-    f7.dialog.alert("Fehlermeldung","Drahtrechner", () => {
-      f7.loginScreen.close();
-    });
+    f7.dialog.alert(
+      "Der Wert DICKE muss kleiner als der Wert BREITE sein.",
+      () => {
+        f7.loginScreen.close();
+      }
+    );
   } else {
     // Berechne Seitenverhältnis
     let calculatedAspectRatio = round(
@@ -150,5 +148,5 @@ const onSubmit = handleSubmit((values) => {
     d = r + r;
     result.value = d.toFixed(4);
   }
-});
+};
 </script>

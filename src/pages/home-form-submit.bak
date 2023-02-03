@@ -87,6 +87,11 @@
   let aspectRatio = ref(null);
   let crossSectionArea = ref(null);
   
+/* f7ready((f7) => {
+        f7.dialog.alert('Component mounted');
+}); */
+
+
   function round(num, decimals) {
     let m = Number((Math.abs(num) * 100).toPrecision(15));
     return (Math.round(m) / decimals) * Math.sign(num);

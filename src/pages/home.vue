@@ -91,6 +91,7 @@ const onSubmit = handleSubmit((values) => {
     100
   ); // 100 bedeutet, auf 2 Dezimalstellen gerundet
 
+  
   if (!compareValues(valueDicke, valueBreite)) {
     f7.dialog.alert(
       "Der Wert DICKE muss kleiner als der WERT Breite sein",

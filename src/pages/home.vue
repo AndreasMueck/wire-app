@@ -6,43 +6,15 @@
     <f7-block-title>Berechnung des Rund-Durchmessers</f7-block-title>
     <f7-block>
       <f7-list form id="inputForm" @submit="onSubmit">
-        <f7-list-input
-          id="breite"
-          label="Flachdraht-Breite"
-          type="number"
-          placeholder="0,0000"
-          name="breite"
-          v-model:value="breite"
-          min="0"
-          max="5"
-          info="Wertebereich bis max. 5,00 mm"
-          step="0.0001"
-          clear-button
-          validate
-          @input="name = $event.target.value"
-          required
-        >
+        <f7-list-input id="breite" label="Flachdraht-Breite" type="number" placeholder="0,0000" name="breite"
+          v-model:value="breite" min="0" max="5" info="Wertebereich bis max. 5,00 mm" step="0.0001" clear-button
+          validate @input="name = $event.target.value" required>
         </f7-list-input>
-        <f7-list-input
-          id="dicke"
-          label="Flachdraht-Dicke"
-          type="number"
-          placeholder="0,0000"
-          name="dicke"
-          v-model:value="dicke"
-          min="0"
-          max="5"
-          info="Wertebereich bis max. 5,00 mm"
-          step="0.0001"
-          clear-button
-          validate
-          @input="name = $event.target.value"
-          required
-        >
+        <f7-list-input id="dicke" label="Flachdraht-Dicke" type="number" placeholder="0,0000" name="dicke"
+          v-model:value="dicke" min="0" max="5" info="Wertebereich bis max. 5,00 mm" step="0.0001" clear-button validate
+          @input="name = $event.target.value" required>
         </f7-list-input>
-        <f7-button fill large type="submit" :disabled="!noValues"
-          >Berechnen</f7-button
-        >
+        <f7-button fill large type="submit" :disabled="!noValues">Berechnen</f7-button>
       </f7-list>
     </f7-block>
     <!-- Result -->
@@ -113,22 +85,34 @@ const onSubmit = handleSubmit((values) => {
   const valueDicke = parseFloat(dicke.value);
   const valueBreite = parseFloat(breite.value);
 
+  // Berechne Seitenverhältnis
+  let calculatedAspectRatio = round(
+    parseFloat(valueBreite) / parseFloat(valueDicke),
+    100
+  ); // 100 bedeutet, auf 2 Dezimalstellen gerundet
+
   if (!compareValues(valueDicke, valueBreite)) {
-    f7.dialog.alert("Fehlermeldung","Drahtrechner", () => {
-      f7.loginScreen.close();
-    });
-  } else {
-    // Berechne Seitenverhältnis
-    let calculatedAspectRatio = round(
-      parseFloat(valueBreite) / parseFloat(valueDicke),
-      100
-    ); // auf 2 Stellen nach dem Komma gerundet
+    f7.dialog.alert(
+      "Der Wert DICKE muss kleiner als der WERT Breite sein",
+      "Drahtrechner",
+      () => {
+        f7.loginScreen.close();
+      }
+    );
+  } else if (calculatedAspectRatio > 5) {
+    f7.dialog.alert(
+      "Korrekturfaktoren sind nur bis zu einem Seitenverhältnis von 5:1 gültig. Berechnetes Seitenverhältnis: " + calculatedAspectRatio + ":1",
+      "Drahtrechner",
+      () => {
+        f7.loginScreen.close();
+      }
+    );
+  } else { // alles ok, berechne Werte für den Durchmesser
+
     let calculatedAspectRatioTrailingZeros = calculatedAspectRatio.toFixed(2);
+    aspectRatio.value = calculatedAspectRatioTrailingZeros + " : 1"; // string!
 
-    //console.log(typeof calculatedAspectRatioTrailingZeros);
-    aspectRatio.value = calculatedAspectRatioTrailingZeros; // string!
-
-    // Berechne Korrekturfaktor
+    // Welcher Korrekturfaktor wird benötigt
     if (calculatedAspectRatio >= 1 && calculatedAspectRatio <= 5.0) {
       kFactorValue.value = kFactor[calculatedAspectRatioTrailingZeros];
     }

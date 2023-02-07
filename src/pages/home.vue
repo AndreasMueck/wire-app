@@ -4,19 +4,21 @@
     <f7-navbar title="Durchmesser berechnen"></f7-navbar>
     <!-- Input fields -->
     <f7-block-title>Berechnung des Rund-Durchmessers</f7-block-title>
-    <f7-block>
-      <f7-list form id="inputForm" @submit="onSubmit">
-        <f7-list-input id="breite" label="Flachdraht-Breite" type="number" placeholder="0,0000" name="breite"
+
+      <f7-list form id="inputForm" @submit="onSubmit" no-hairlines-md>
+        <f7-list-input id="breite" label="Breite" type="number" placeholder="0,0000 mm" name="breite"
           v-model:value="breite" min="0" max="5" info="Wertebereich bis max. 5,00 mm" step="0.0001" clear-button
           validate @input="name = $event.target.value" required>
         </f7-list-input>
-        <f7-list-input id="dicke" label="Flachdraht-Dicke" type="number" placeholder="0,0000" name="dicke"
+        <f7-list-input id="dicke" label="Dicke" type="number" placeholder="0,0000 mm" name="dicke"
           v-model:value="dicke" min="0" max="5" info="Wertebereich bis max. 5,00 mm" step="0.0001" clear-button validate
           @input="name = $event.target.value" required>
         </f7-list-input>
-        <f7-button fill large type="submit" :disabled="!noValues">Berechnen</f7-button>
+        <f7-block>
+          <f7-button fill large type="submit" :disabled="!noValues">Berechnen</f7-button>
+        </f7-block>
       </f7-list>
-    </f7-block>
+
     <!-- Result -->
     <f7-block-title>Ergebnis der Berechnung</f7-block-title>
     <f7-block>
@@ -47,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { f7, f7ready } from "framework7-vue";
 import { useForm } from "vee-validate";
 import kFactor from "../data/krArray"; // Grosser Array mit Korrekturfaktoren
@@ -91,7 +93,7 @@ const onSubmit = handleSubmit((values) => {
     100
   ); // 100 bedeutet, auf 2 Dezimalstellen gerundet
 
-  
+
   if (!compareValues(valueDicke, valueBreite)) {
     f7.dialog.alert(
       "Der Wert DICKE muss kleiner als der WERT Breite sein",

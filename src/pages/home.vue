@@ -103,6 +103,7 @@ const onSubmit = handleSubmit((values) => {
       }
     );
   } else if (calculatedAspectRatio > 5) {
+
     f7.dialog.alert(
       "Korrekturfaktoren sind nur bis zu einem Seitenverhältnis von 5:1 gültig. Berechnetes Seitenverhältnis: " + calculatedAspectRatio + ":1",
       "Drahtrechner",

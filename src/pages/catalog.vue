@@ -21,40 +21,76 @@
               <option value="2700">Aluminium</option>
             </select>
           </f7-list-item>
-          <f7-list-input id="diameter" label="Durchmesser in mm" type="number" name="diameter"
-            v-model:value="diameter" min="0" max="500" step="000.0001" clear-button
-            validate @input="name = $event.target.value" required>
+          <f7-list-input id="diameter" label="Durchmesser in mm" type="number" name="diameter" v-model:value="diameter"
+            min="0" max="500" step="000.0001" clear-button validate @input="name = $event.target.value" required>
           </f7-list-input>
           <f7-list-input id="wirelength" label="Drahtlänge in m" type="number" name="wirelength"
-            v-model:value="wirelength" min="0" max="9999999" step="0000000.01" clear-button
-            validate @input="name = $event.target.value" required>
+            v-model:value="wirelength" min="0" max="9999999" step="0000000.01" clear-button validate
+            @input="name = $event.target.value" required>
           </f7-list-input>
           <f7-block>
-          <f7-button fill large type="submit" :disabled="!noValues">Berechnen</f7-button>
-        </f7-block>
+            <f7-button fill large type="submit" :disabled="!noValues">Berechnen</f7-button>
+          </f7-block>
         </f7-list>
         <!-- Result -->
-    <f7-block-title>Ergebnis der Berechnung</f7-block-title>
-    <f7-block>
-      <f7-row>
-        <f7-col width="75">Gewicht in kg</f7-col>
-        <f7-col width="25" style="font-weight: bold; color: green">
-          {{ resultKilogramm }}
-        </f7-col>
-      </f7-row>
-    </f7-block>
-    <!-- Parameters -->
-    <f7-block-title>Parameter der Berechnung</f7-block-title>
-    <f7-block>
-      <f7-row>
-        <f7-col width="75">Spezifische Dichte [kg/m3]</f7-col>
-        <f7-col width="25">{{ selectedMaterial }}</f7-col>
-      </f7-row>
-    </f7-block>
+        <f7-block-title>Ergebnis der Berechnung</f7-block-title>
+        <f7-block>
+          <f7-row>
+            <f7-col width="75">Gewicht in kg</f7-col>
+            <f7-col width="25" style="font-weight: bold; color: green">
+              {{ resultWeight }}
+            </f7-col>
+          </f7-row>
+        </f7-block>
+        <!-- Parameters -->
+        <f7-block-title>Parameter der Berechnung</f7-block-title>
+        <f7-block>
+          <f7-row>
+            <f7-col width="75">Spezifische Dichte [kg/m3]</f7-col>
+            <f7-col width="25">{{ selectedMaterial }}</f7-col>
+          </f7-row>
+        </f7-block>
       </f7-tab>
       <f7-tab id="tab2" class="page-content">
+        <f7-block-title>Umrechnung Gewicht in Drahtlänge</f7-block-title>
+        <f7-list form id="inputForm" @submit="onSubmitWeight" no-hairlines-md>
+          <f7-list-item title="Werkstoff" smart-select :smart-select-params="{ pageBackLinkText: 'Zurück' }">
+            <select v-model="selectedMaterial" @change="onSelectChange()">
+              <option value="7880" selected>Edelstahl</option>
+              <option value="7850">Federstahl</option>
+              <option value="8820">Bronze</option>
+              <option value="8670">Messing</option>
+              <option value="2700">Aluminium</option>
+            </select>
+          </f7-list-item>
+          <f7-list-input id="diameter" label="Durchmesser in mm" type="number" name="diameter" v-model:value="diameter"
+            min="0" max="500" step="000.0001" clear-button validate @input="name = $event.target.value" required>
+          </f7-list-input>
+          <f7-list-input id="weight" label="Gewicht in kg" type="number" name="weight"
+            v-model:value="weight" min="0" max="9999999" step="0000000.01" clear-button validate
+            @input="name = $event.target.value" required>
+          </f7-list-input>
+          <f7-block>
+            <f7-button fill large type="submit" :disabled="!noValues">Berechnen</f7-button>
+          </f7-block>
+        </f7-list>
+        <!-- Result -->
+        <f7-block-title>Ergebnis der Berechnung</f7-block-title>
         <f7-block>
-          <p>Donec iaculis posuere massa sed dignissim. Praesent id nibh nec massa mollis egestas.</p>
+          <f7-row>
+            <f7-col width="75">Länge in m</f7-col>
+            <f7-col width="25" style="font-weight: bold; color: green">
+              {{ resultLength }}
+            </f7-col>
+          </f7-row>
+        </f7-block>
+        <!-- Parameters -->
+        <f7-block-title>Parameter der Berechnung</f7-block-title>
+        <f7-block>
+          <f7-row>
+            <f7-col width="75">Spezifische Dichte [kg/m3]</f7-col>
+            <f7-col width="25">{{ selectedMaterial }}</f7-col>
+          </f7-row>
         </f7-block>
       </f7-tab>
     </f7-tabs>
@@ -70,7 +106,9 @@ const { handleSubmit } = useForm();
 const selectedMaterial = ref('7880');
 const diameter = ref('');
 const wirelength = ref('');
-const resultKilogramm = ref(null);
+const weight = ref('');
+const resultWeight = ref(null);
+const resultLength = ref(null);
 
 onMounted(() => {
   console.log("Material: " + selectedMaterial.value);
@@ -91,12 +129,31 @@ const onSubmit = handleSubmit((values) => {
   const pi = Math.PI;
 
   let D = (valueDiameter / 1000); // Durchmesser in m
-  let F = (pi * ((D/2)**2)); // Fläche in m2
-  let V = F * ( valueWirelength ); // Volumen in m3
+  let F = (pi * ((D / 2) ** 2)); // Fläche in m2
+  let V = F * (valueWirelength); // Volumen in m3
   let result = V * Material;
 
-  resultKilogramm.value = result.toFixed(2);
+  resultWeight.value = result.toFixed(2);
 
 });
+
+const onSubmitWeight = handleSubmit((values) => {
+  const valueDiameter = parseFloat(diameter.value);
+  const valueWeight = parseFloat(weight.value);
+  const Material = parseFloat(selectedMaterial.value);
+  const pi = Math.PI;
+
+  let D = (valueDiameter / 1000); // Durchmesser in m
+  let F = (pi * ((D / 2) ** 2)); // Fläche in m2
+
+  let result = valueWeight / Material / F;
+
+  //let V = F * (valueWeight); // Volumen in m3
+  //let result = V * Material;
+
+  resultLength.value = result.toFixed(2);
+
+});
+
 </script>
 

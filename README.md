@@ -4,8 +4,12 @@
 
 Will be running with Apple iOS and Google Android
 
-
-![alt](studio.png) ![alt](ios.png) ![alt](android.png) ![alt](android1.png)
+### APK
+![alt](studio.png)
+### APPLE iOS
+![alt](ios.png)
+### Google Android
+![alt](android.png) ![alt](android1.png)
 
 
 

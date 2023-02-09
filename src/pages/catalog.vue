@@ -13,12 +13,10 @@
         <f7-block-title>Umrechnung Drahtlänge in Gewicht</f7-block-title>
         <f7-list form id="inputForm" @submit="onSubmit" no-hairlines-md>
           <f7-list-item title="Werkstoff" smart-select :smart-select-params="{ pageBackLinkText: 'Zurück' }">
-            <select v-model="selectedMaterial" @change="onSelectChange()">
-              <option value="7880" selected>Edelstahl</option>
-              <option value="7850">Federstahl</option>
-              <option value="8820">Bronze</option>
-              <option value="8670">Messing</option>
-              <option value="2700">Aluminium</option>
+            <select v-model="selectedMaterial" @change="onSelectChange($event)">
+              <option v-for="material in materialsList" :key="material.dichte" :value="material.dichte">
+                {{ material.name }}
+              </option>
             </select>
           </f7-list-item>
           <f7-list-input id="diameter" label="Durchmesser in mm" type="number" name="diameter" v-model:value="diameter"
@@ -55,20 +53,17 @@
         <f7-block-title>Umrechnung Gewicht in Drahtlänge</f7-block-title>
         <f7-list form id="inputForm" @submit="onSubmitWeight" no-hairlines-md>
           <f7-list-item title="Werkstoff" smart-select :smart-select-params="{ pageBackLinkText: 'Zurück' }">
-            <select v-model="selectedMaterial" @change="onSelectChange()">
-              <option value="7880" selected>Edelstahl</option>
-              <option value="7850">Federstahl</option>
-              <option value="8820">Bronze</option>
-              <option value="8670">Messing</option>
-              <option value="2700">Aluminium</option>
+            <select v-model="selectedMaterial" @change="onSelectChange($event)">
+              <option v-for="material in materialsList" :key="material.dichte" :value="material.dichte">
+                {{ material.name }}
+              </option>
             </select>
           </f7-list-item>
           <f7-list-input id="diameter" label="Durchmesser in mm" type="number" name="diameter" v-model:value="diameter"
             min="0" max="500" step="000.0001" clear-button validate @input="name = $event.target.value" required>
           </f7-list-input>
-          <f7-list-input id="weight" label="Gewicht in kg" type="number" name="weight"
-            v-model:value="weight" min="0" max="9999999" step="0000000.01" clear-button validate
-            @input="name = $event.target.value" required>
+          <f7-list-input id="weight" label="Gewicht in kg" type="number" name="weight" v-model:value="weight" min="0"
+            max="9999999" step="0000000.01" clear-button validate @input="name = $event.target.value" required>
           </f7-list-input>
           <f7-block>
             <f7-button fill large type="submit" :disabled="!noValues">Berechnen</f7-button>
@@ -110,6 +105,14 @@ const weight = ref('');
 const resultWeight = ref(null);
 const resultLength = ref(null);
 
+const materialsList = ref([
+  { dichte: "7880", name: "Edelstahl" },
+  { dichte: "7850", name: "Federstahl" },
+  { dichte: "8200", name: "Messing" },
+  { dichte: "8620", name: "Bronze" },
+  { dichte: "2700", name: "Aluminium" },
+]);
+
 onMounted(() => {
   console.log("Material: " + selectedMaterial.value);
 })
@@ -118,7 +121,7 @@ const noValues = computed(
   () => diameter.value.length > 0 && wirelength.value.length > 0
 );
 
-const onSelectChange = () => {
+const onSelectChange = (event) => {
   console.log("Material: " + selectedMaterial.value);
 }
 

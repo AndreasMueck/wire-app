@@ -137,7 +137,6 @@ const onSubmit = handleSubmit((values) => {
   let result = V * Material;
 
   resultWeight.value = result.toFixed(2);
-
 });
 
 const onSubmitWeight = handleSubmit((values) => {
@@ -150,12 +149,7 @@ const onSubmitWeight = handleSubmit((values) => {
   let F = (pi * ((D / 2) ** 2)); // Fläche in m2
 
   let result = valueWeight / Material / F;
-
-  //let V = F * (valueWeight); // Volumen in m3
-  //let result = V * Material;
-
   resultLength.value = result.toFixed(2);
-
 });
 
 </script>

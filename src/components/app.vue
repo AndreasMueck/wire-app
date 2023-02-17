@@ -7,6 +7,7 @@
     <f7-toolbar tabbar labels bottom>
       <f7-link tab-link="#view-home" tab-link-active icon-ios="f7:arrow_up_down_square" icon-aurora="f7:arrow_up_down_square" icon-md="material:expand" text="Durchmesser berechnen"></f7-link>
       <f7-link tab-link="#view-catalog" icon-ios="f7:repeat" icon-aurora="f7:repeat" icon-md="material:repeat_on" text="Maße umrechnen"></f7-link>
+      <f7-link tab-link="#view-test" text="Test"></f7-link>
     </f7-toolbar>
 
     <!-- Your main view/tab, should have "view-main" class. It also has "tab-active" class -->
@@ -15,6 +16,8 @@
     <!-- Catalog View -->
     <f7-view id="view-catalog" name="catalog" tab url="/catalog/"></f7-view>
 
+    <!-- Test View -->
+    <f7-view id="view-test" name="test" tab url="/test/"></f7-view>
   </f7-views>
 
   </f7-app>
